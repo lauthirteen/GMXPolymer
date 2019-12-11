@@ -1,0 +1,12 @@
+[ bonds ]
+; AAtom Atype ANew  DAtom Dtype DNew BondLen BondForce Funct
+A1 c AA1  D1 oh DD1 0.13696 315140 1
+
+[ angles ]
+;AtomType AtomName DtomName AngleNum ANgleForce Funct
+ca DD1 AA1 109.2  582.15 1
+ca AA1 DD1 120.2  582.15 1
+o AA1 DD1 118.7  582.15 1
+
+[ dihedrals ]
+; AtomType AtomName AtomName AtomType func    C0         C1         C2         C3         C4         C5

@@ -1,0 +1,36 @@
+; TMC_GMX.top created by acpype (Rev: 0) on Tue Dec 10 15:58:51 2019
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.8333
+
+[ atomtypes ]
+;name   bond_type     mass     charge   ptype   sigma         epsilon       Amb
+ ca       ca          0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ ha       ha          0.00000  0.00000   A     2.59964e-01   6.27600e-02 ; 1.46  0.0150
+ c        c           0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ o        o           0.00000  0.00000   A     2.95992e-01   8.78640e-01 ; 1.66  0.2100
+ cl       cl          0.00000  0.00000   A     3.47094e-01   1.10876e+00 ; 1.95  0.2650
+; ca       ca          0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+; ha       ha          0.00000  0.00000   A     2.59964e-01   6.27600e-02 ; 1.46  0.0150
+ oh       oh          0.00000  0.00000   A     3.06647e-01   8.80314e-01 ; 1.72  0.2104
+ c3       c3          0.00000  0.00000   A     3.39967e-01   4.57730e-01 ; 1.91  0.1094
+ hc       hc          0.00000  0.00000   A     2.64953e-01   6.56888e-02 ; 1.49  0.0157
+ ho       ho          0.00000  0.00000   A     0.00000e+00   0.00000e+00 ; 0.00  0.0000
+ 
+#include "TMC.itp"
+#include "SBI.itp"
+
+ 
+#include "./BQ1.itp"
+#include "./BQ2.itp"
+#include "./BQ3.itp"
+[ system ]
+ TMC
+
+[ molecules ]
+ TMC        0
+ SBI        0
+ BQ1        0
+ BQ2        0
+ BQ3        1
