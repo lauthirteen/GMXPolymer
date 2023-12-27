@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*
-# By Jianchuan Liu  ICCAS  2019-10-15
+# By Jianchuan Liu  
 
 import linecache
 import os
