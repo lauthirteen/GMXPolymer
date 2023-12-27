@@ -13,7 +13,7 @@ import datetime
 
 ##############################################################
 version="1.0"
-authors=["Jianchuan Liu, ICCAS"]
+authors=["Jianchuan Liu, XiHua University"]
 # This is a simple and versatily option class that allows easy
 # definition and parsing of options.
 class Option:
