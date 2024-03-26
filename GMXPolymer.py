@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*
-# By Jianchuan Liu  
+# By Jianchuan Liu  XHU  2024-03-26
 
 import linecache
 import os
@@ -12,8 +12,8 @@ import time
 import datetime
 
 ##############################################################
-version="1.0"
-authors=["Jianchuan Liu, XiHua University"]
+version="2.0"
+authors=["Jianchuan Liu, Xihua University"]
 # This is a simple and versatily option class that allows easy
 # definition and parsing of options.
 class Option:
@@ -43,10 +43,12 @@ options = [
     ("-e",        Option(str,                      1,     None, "Input minim mdp file (MDP)")),
     ("-m",        Option(str,                      1,     None, "Input md mdp file (MDP)")),
     ("-n",        Option(int,                      1,     None, "Input estimate the number of bonds")),
-    ("-c",        Option(float,                    1,     None, "Input cut off radius of bond (nm)")),
-    ("-i",        Option(str,                      1,     None, "Whether the bond is in the molecule？ Yes (Y) or No (N)")),
+    ("-max",      Option(float,                    1,     None, "The maximum bonding distance (nm)")),
+    ("-min",      Option(float,                    1,     None, "Minimum bonding distance (nm)")),
+    ("-i",        Option(str,                      1,     None, "Whether the bond is in the molecule? Yes (Y) or No (N)")),
     ("-b",        Option(str,                      1,     None, "Input bonds link file (DAT)")),
-    ("-h",        Option(bool,                     0,    False, "Display this help")),
+    ("-r",        Option(int,                      1,     None, "Restart program, 0:do not restart; >0: restart id")),
+    ("-h",        Option(bool,                     0,     False, "Display this help")),
     ("-ver",      Option(str,                      1,     None, "Display version")),
     ]
 ######
@@ -55,7 +57,7 @@ def help():
     import sys
     print("Usage:\n"
           "python GMXPolymer.py -g init.gro -t topol.top -e minim.mdp "
-          "-m md.mdp -n 2 -c 0.6 -i Y -b Bond.dat")
+          "-m md.mdp -n 2 -max 0.6 -min 0.25 -i Y -b Bond.dat")
     for item in options:
         if type(item) == str:
             print (item)
@@ -77,7 +79,7 @@ def option_parser(args,options):
         help()
     if '-ver' in args or '--version' in args:
         print("                      :-) GMXPloymer, VERSION %s (-:\n"
-              "                               2019-10-24\n"
+              "                               2024-01-05\n"
               "                           GMXPloymer is written by:\n"
               "                            %s" % (version,authors[0]))
         sys.exit()
@@ -102,7 +104,7 @@ def option_parser(args,options):
     #'''
     for info in option1:
         if info[0] not in options['Arguments'] and info[0] != "-h" and info[0] != "-ver":
-            print("!!! Please enter the %s parameters ！！！" % info[0])
+            print("!!! Please enter the %s parameters !!!" % info[0])
             sys.exit()
     #'''
     return option2
@@ -151,10 +153,10 @@ def RunGmx(TopFile,Number,MinimFile,MdFile):
     print("Gromacs program is runing...")
     # call gromacs program
     os.system('rm -rf  run.log ./#* *.edr *.cpt *.trr *.tpr md*.gro em*.gro >& /dev/null')
-    os.system('gmx grompp -f %s -c tmp%s.gro -p %s -o em%s.tpr -maxwarn 2 >& /dev/null' % (MinimFile,Number-1,TopFile,Number))
-    os.system('gmx mdrun -deffnm em%s >& /dev/null' % Number)
-    os.system('gmx grompp -f %s -c em%s.gro -p %s -o md%s.tpr -maxwarn 2 >& /dev/null' % (MdFile,Number,TopFile,Number))
-    os.system('gmx mdrun -deffnm md%s >& /dev/null' % Number)
+    os.system('gmx grompp -f %s -c tmp%s.gro -p %s -o em%s.tpr -maxwarn 2 >& pre_em.log' % (MinimFile,Number-1,TopFile,Number))
+    os.system('gmx mdrun -deffnm em%s -nt 6 >& run_em.log' % Number)
+    os.system('gmx grompp -f %s -c em%s.gro -p %s -o md%s.tpr -maxwarn 2 >& pre_md.log' % (MdFile,Number,TopFile,Number))
+    os.system('gmx mdrun -deffnm md%s  -nt 6 >& run_md.log' % Number)
     os.system('echo 0 | gmx trjconv -f md%s.gro -s md%s.tpr -o md%s.gro -pbc whole >& /dev/null' % (Number,Number,Number))
     os.system('rm  ./#*  *.edr *.trr *.tpr *.cpt *.xtc em*.gro >& /dev/null')
 #
@@ -213,21 +215,25 @@ def WirteGMXGro(totalmoles, NewGroName, natoms):
     n = 1
     m = 1
     #read total molecle
-    for info1 in totalmoles:
-        resid = n
-        # read single molecle
-        for info2 in info1:
-            # read single atomic information
-            resname = info2[0]
-            atomtype = info2[1]
-            x = info2[2]
-            y = info2[3]
-            z = info2[4]
-            natom = (m - 1) % 99999 + 1
-            NewFile.write("%5d%-5s%5s%5d%8.3f%8.3f%8.3f\n" %
-                          (resid, resname, atomtype, natom, x, y, z))
-            m += 1
-        n += 1
+    if len(totalmoles) > 0:
+        for info1 in totalmoles:
+            resid = n
+            # read single molecle
+            for info2 in info1:
+                # read single atomic information
+                resname = info2[0]
+                atomtype = info2[1]
+                x = info2[2]
+                y = info2[3]
+                z = info2[4]
+                natom = (m - 1) % 99999 + 1
+                NewFile.write("%5d%-5s%5s%5d%8.3f%8.3f%8.3f\n" %
+                              (resid, resname, atomtype, natom, x, y, z))
+                m += 1
+            n += 1
+    else:
+        resid = 0
+        natom = 0
     NewFile.flush()
     NewFile.close()
     return resid, natom
@@ -484,23 +490,24 @@ def ReadDiheLink(DiheInforFile):
         AtomName2 = str(line.split()[2])
         AtomType2 = str(line.split()[3])
         Funct = str(line.split()[4])
-        C0 = str(line.split()[5])
-        C1 = str(line.split()[6])
-        C2 = str(line.split()[7])
-        C3 = str(line.split()[8])
-        C4 = str(line.split()[9])
-        C5 = str(line.split()[10])
+        C0 = line.split()[5:]
+        C0 = [' '.join(C0)]
+        #C1 = str(line.split()[6])
+        #C2 = str(line.split()[7])
+        #C3 = str(line.split()[8])
+        #C4 = str(line.split()[9])
+        #C5 = str(line.split()[10])
         DiheAD1.append(AtomType1)
         DiheAD1.append(AtomName1)
         DiheAD1.append(AtomName2)
         DiheAD1.append(AtomType2)
         DiheAD1.append(Funct)
         DiheAD1.append(C0)
-        DiheAD1.append(C1)
-        DiheAD1.append(C2)
-        DiheAD1.append(C3)
-        DiheAD1.append(C4)
-        DiheAD1.append(C5)
+        #DiheAD1.append(C1)
+        #DiheAD1.append(C2)
+        #DiheAD1.append(C3)
+        #DiheAD1.append(C4)
+        #DiheAD1.append(C5)
         DiheAD.append(DiheAD1)
     return DiheAD
 #
@@ -828,10 +835,14 @@ def main(options):
     TotalBondNum = int(options["-n"]) #2  # integer
     # Bond information file
     BondInforFile = options["-b"] #"Bond.dat"
-    # Cut off radius (nm)
-    CutOff = float(options["-c"]) #0.6  # nm
+    # The maximum bonding distance (nm)
+    CutOffMax = float(options["-max"]) #0.6  # nm
+    # The minimum bonding distance (nm)
+    CutOffMin = float(options["-min"]) #0.25  # nm
     # Whether the bond is in the molecule？ Yes (Y) or No (N)
     BondInMol = options["-i"]#"N"  # Y or N
+    # Whether to restart the task
+    Restart_id = options["-r"]
     # init gmx file
     GroFile = options["-g"]  #"init.gro"
     TopFile = options["-t"]  #"topol.top"
@@ -859,14 +870,20 @@ def main(options):
     if (os.path.exists(BondInforFile) != True) or (os.path.getsize(BondInforFile) == 0):
         WroInfo2(BondInforFile)
     ## delete the tmp file
-    os.system("rm tmp*.gro >& /dev/null")
-    os.system("cp %s tmp0.gro >& /dev/null" % GroFile)
-    os.system("cp %s BQ1.top >& /dev/null" % TopFile)
-    os.system("rm -rf BondSteep* >& /dev/null")
+    if int(Restart_id) == 0:
+        os.system("rm tmp*.gro >& /dev/null")
+        os.system("cp %s tmp0.gro >& /dev/null" % GroFile)
+        os.system("cp %s BQ1.top >& /dev/null" % TopFile)
+        os.system("rm -rf BondSteep* >& /dev/null")
+        TotalBondNumBegin = 1
+    else:
+        print("Restart: %s bonds" % Restart_id)
+        TotalBondNumBegin = int(Restart_id)
+        os.system("cp -rf BondSteep-%s/md*.gro tmp%s.gro >& /dev/null" % (int(Restart_id), int(Restart_id)-1))
+        os.system("cp -rf BondSteep-%s/BQ%s.top BQ%s.top >& /dev/null" % (int(Restart_id)-1, int(Restart_id)-1, int(Restart_id)))
     # record the begin times
     StartTime = time.time()
     ###
-    TotalBondNumBegin = 1
     while TotalBondNumBegin <= TotalBondNum:
         NewGroName = "tmp%s.gro" % TotalBondNumBegin
         filename = "md%s.gro" % TotalBondNumBegin
@@ -901,10 +918,24 @@ def main(options):
                         DGroLine = totalmoles[info4][info5]
                         ADdist = GetDist(AGroLine, DGroLine)
                         if BondInMol.upper() == "Y":
-                            if float(ADdist) < MinDist:
-                                MinDist = ADdist
+                            if float(ADdist) < MinDist and float(ADdist) >= CutOffMin:
                                 AMolIndex = info2
                                 DMolIndex = info4
+                                '''
+                                AAtomNum = len(totalmoles[AMolIndex])
+                                DAtomNum = len(totalmoles[DMolIndex])
+                                print("atom number of A:%s" AAtomNum)
+                                print("atom number of D:%s" DAtomNum)
+                                找两个原子之间有多少个键链，少于特定个数不成键
+
+                                MonomerNum = 2
+                                if AMolIndex == DMolIndex and float(ADdist) <= CutOffMax and MonomerNum < :
+                                    print("Intramolecular bonds were found")
+                                    print("But the number of monomers set was not satisfied")
+                                    print("!!! Skpi !!!")
+                                    continue
+                                '''
+                                MinDist = ADdist
                                 Aatomname = info1[0]
                                 Atype = info1[1]
                                 AIndex = info3
@@ -917,7 +948,7 @@ def main(options):
                                 BondForce = float(info1[7])
                                 Funct = int(info1[8])
                         elif BondInMol.upper() == "N":
-                            if float(ADdist) < MinDist and int(info2) != int(info4):
+                            if float(ADdist) < MinDist and float(ADdist) >= CutOffMin and int(info2) != int(info4):
                                 MinDist = ADdist
                                 AMolIndex = info2
                                 DMolIndex = info4
@@ -944,7 +975,8 @@ def main(options):
             AMol = totalmoles[AMolIndex]
             DMol = totalmoles[DMolIndex]
             ###
-            if MinDist <= CutOff:
+            #print(MinDist)
+            if MinDist <= CutOffMax and MinDist >= CutOffMin:
                 print("New bond length is: %s, (%s%s %s %s -> %s%s %s %s), %s bonds" %
                       (MinDist, AMolIndex + 1, AResname, Aatomname, AIndex + 1,
                        DMolIndex + 1, DResname, Datomname, DIndex + 1, TotalBondNumBegin))
@@ -977,6 +1009,7 @@ def main(options):
                     # add the anlge information in the itp file
                     LineNum = GetLineNum(str(NewResname) + ".itp", "angles")[0][0]
                     AngleAD = ReadAngleLink(BondInforFile)
+                    AMolAtomNum = 0
                     Aneigh = GetNeighAtom(str(NewResname) + ".itp", AIndex + 1, DIndex + 1 + AMolAtomNum)[0]
                     Dneigh = GetNeighAtom(str(NewResname) + ".itp", AIndex + 1, DIndex + 1 + AMolAtomNum)[1]
                     nnn = 1
@@ -1008,16 +1041,14 @@ def main(options):
                             atomtype2 = Dneigh[info7]
                             for info8 in DiheAD:
                                 if atomtype1 == info8[0] and Anew == info8[1] and Dnew == info8[2] and atomtype2 == info8[3]:
-                                    Info = "%6d%7d%7d%7d%7d%14.4e%14.4e%14.4e%14.4e%14.4e%14.4e ; usr define dihedral" % \
+                                    Info = "%6d%7d%7d%7d%7d    %s ; usr define dihedral" % \
                                            (int(info6), AIndex + 1,DIndex + 1 + AMolAtomNum,int(info7),
-                                            int(info8[4]), float(info8[5]), float(info8[6]),float(info8[7]),
-                                            float(info8[8]), float(info8[9]), float(info8[10]))
+                                            int(info8[4]), str(info8[5][0]))
                                     InsertInfo(str(NewResname) + ".itp", LineNum + nnn, Info, "low")
                                 if atomtype1 == info8[3] and Anew == info8[2] and Dnew == info8[1] and atomtype2 == info8[0]:
-                                    Info = "%6d%7d%7d%7d%7d%14.4e%14.4e%14.4e%14.4e%14.4e%14.4e ; usr define dihedral" % \
+                                    Info = "%6d%7d%7d%7d%7d    %s ; usr define dihedral" % \
                                            (int(info7), DIndex + 1 + AMolAtomNum, AIndex + 1, int(info6),
-                                            int(info8[4]), float(info8[5]), float(info8[6]),float(info8[7]),
-                                            float(info8[8]), float(info8[9]), float(info8[10]))
+                                            int(info8[4]), str(info8[5][0]))
                                     InsertInfo(str(NewResname) + ".itp", LineNum + nnn, Info, "low")
                     #'''
                     # chenge the topol.top file [ molecules ] infromation
@@ -1041,7 +1072,10 @@ def main(options):
                         MolName = info[0]
                         Mole = info[1]
                         if MolName == Aname or MolName == Dname:
-                            Mole = int(Mole) - 1
+                            if MolName == Aname:
+                                Mole = int(Mole) - 1
+                            if MolName == Dname:
+                                Mole = int(Mole) - 1
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                         else:
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
@@ -1134,16 +1168,14 @@ def main(options):
                             atomtype2 = Dneigh[info7]
                             for info8 in DiheAD:
                                 if atomtype1 == info8[0] and Anew == info8[1] and Dnew == info8[2] and atomtype2 == info8[3]:
-                                    Info = "%6d%7d%7d%7d%7d%14.4e%14.4e%14.4e%14.4e%14.4e%14.4e ; usr define dihedral" % \
+                                    Info = "%6d%7d%7d%7d%7d    %s ; usr define dihedral" % \
                                            (int(info6), AIndex + 1,DIndex + 1 + AMolAtomNum,int(info7),
-                                            int(info8[4]), float(info8[5]), float(info8[6]),float(info8[7]),
-                                            float(info8[8]), float(info8[9]), float(info8[10]))
+                                            int(info8[4]), str(info8[5][0]))
                                     InsertInfo(str(NewResname) + ".itp", LineNum + nnn, Info, "low")
                                 if atomtype1 == info8[3] and Anew == info8[2] and Dnew == info8[1] and atomtype2 == info8[0]:
-                                    Info = "%6d%7d%7d%7d%7d%14.4e%14.4e%14.4e%14.4e%14.4e%14.4e ; usr define dihedral" % \
+                                    Info = "%6d%7d%7d%7d%7d    %s ; usr define dihedral" % \
                                            (int(info7), DIndex + 1 + AMolAtomNum, AIndex + 1, int(info6),
-                                            int(info8[4]), float(info8[5]), float(info8[6]),float(info8[7]),
-                                            float(info8[8]), float(info8[9]), float(info8[10]))
+                                            int(info8[4]), str(info8[5][0]))
                                     InsertInfo(str(NewResname) + ".itp", LineNum + nnn, Info, "low")
                     #'''
                     # chenge the topol.top file [ molecules ] infromation
@@ -1167,7 +1199,10 @@ def main(options):
                         MolName = info[0]
                         Mole = info[1]
                         if MolName == Aname or MolName == Dname:
-                            Mole = int(Mole) - 1
+                            if MolName == Aname:
+                                Mole = int(Mole) - 1
+                            if MolName == Dname:
+                                Mole = int(Mole) - 1
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                         else:
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
@@ -1232,7 +1267,7 @@ def main(options):
         TotalTime = EndTime-StartTime
         HMS = datetime.timedelta(seconds=TotalTime)
         print('!!! it costs %s !!!' % HMS)
-        os.system('rm -rf BondSteep-* *.log ./#* *.xtc *.edr *.cpt *.trr *.tpr mdout.mdp '
+        os.system('rm -rf *.log ./#* *.xtc *.edr *.cpt *.trr *.tpr mdout.mdp '
                   'md*.gro em*.gro tmp*.gro Success*.gro BQ* >& /dev/null')
         sys.exit()
 
