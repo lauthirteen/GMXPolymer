@@ -154,9 +154,9 @@ def RunGmx(TopFile,Number,MinimFile,MdFile):
     # call gromacs program
     os.system('rm -rf  run.log ./#* *.edr *.cpt *.trr *.tpr md*.gro em*.gro >& /dev/null')
     os.system('gmx grompp -f %s -c tmp%s.gro -p %s -o em%s.tpr -maxwarn 2 >& pre_em.log' % (MinimFile,Number-1,TopFile,Number))
-    os.system('gmx mdrun -deffnm em%s -nt 6 >& run_em.log' % Number)
+    os.system('gmx mdrun -deffnm em%s -nt 6 -v >& run_em.log' % Number)
     os.system('gmx grompp -f %s -c em%s.gro -p %s -o md%s.tpr -maxwarn 2 >& pre_md.log' % (MdFile,Number,TopFile,Number))
-    os.system('gmx mdrun -deffnm md%s  -nt 6 >& run_md.log' % Number)
+    os.system('gmx mdrun -deffnm md%s  -nt 6 -v >& run_md.log' % Number)
     os.system('echo 0 | gmx trjconv -f md%s.gro -s md%s.tpr -o md%s.gro -pbc whole >& /dev/null' % (Number,Number,Number))
     os.system('rm  ./#*  *.edr *.trr *.tpr *.cpt *.xtc em*.gro >& /dev/null')
 #
@@ -873,23 +873,23 @@ def main(options):
     if int(Restart_id) == 0:
         os.system("rm tmp*.gro >& /dev/null")
         os.system("cp %s tmp0.gro >& /dev/null" % GroFile)
-        os.system("cp %s BQ1.top >& /dev/null" % TopFile)
+        os.system("cp %s B1.top >& /dev/null" % TopFile)
         os.system("rm -rf BondSteep* >& /dev/null")
         TotalBondNumBegin = 1
     else:
         print("Restart: %s bonds" % Restart_id)
         TotalBondNumBegin = int(Restart_id)
         os.system("cp -rf BondSteep-%s/md*.gro tmp%s.gro >& /dev/null" % (int(Restart_id), int(Restart_id)-1))
-        os.system("cp -rf BondSteep-%s/BQ%s.top BQ%s.top >& /dev/null" % (int(Restart_id)-1, int(Restart_id)-1, int(Restart_id)))
+        os.system("cp -rf BondSteep-%s/B%s.top B%s.top >& /dev/null" % (int(Restart_id)-1, int(Restart_id)-1, int(Restart_id)))
     # record the begin times
     StartTime = time.time()
     ###
     while TotalBondNumBegin <= TotalBondNum:
         NewGroName = "tmp%s.gro" % TotalBondNumBegin
         filename = "md%s.gro" % TotalBondNumBegin
-        TopFile = "BQ%s.top" % TotalBondNumBegin
+        TopFile = "B%s.top" % TotalBondNumBegin
         #NewResname = "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1)
-        NewResname = "BQ%s" % TotalBondNumBegin
+        NewResname = "B%s" % TotalBondNumBegin
         MaxRunGmxTimeBegin = 1
         while MaxRunGmxTimeBegin <= MaxRunGmxTime:
             # Run Gmx first step to pre-equilibrium system
@@ -988,11 +988,11 @@ def main(options):
                     ADMolIndexList.append(DMolIndex)
                     Newtotalmoles = totalmoles
                     Newtotalmoles.pop(max(ADMolIndexList))
-                    # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
+                    # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 9999  2024-10-18 Jianchuanliu
                     #resid, natom = WirteGMXGro(Newtotalmoles, NewResname, natoms)
                     #AddGMXGro(ADMol, NewGroName, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
                     resid, natom = WirteGMXGro(Newtotalmoles, NewGroName, natoms)
-                    AddGMXGro(ADMol, NewGroName, resid, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1), natom, AIndex, DIndex, Anew, Dnew)
+                    AddGMXGro(ADMol, NewGroName, resid, "B%s" % ((TotalBondNumBegin-1) % 9999 + 1), natom, AIndex, DIndex, Anew, Dnew)
                     #'''
                     # create new molecule itp file
                     os.system('cp %s.itp %s.itp' % (Aname, NewResname))
@@ -1100,11 +1100,11 @@ def main(options):
                     Newtotalmoles = totalmoles
                     Newtotalmoles.pop(max(ADMolIndexList))
                     Newtotalmoles.pop(min(ADMolIndexList))
-                    # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
+                    # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 9999  2024-10-18 Jianchuanliu
                     #resid, natom = WirteGMXGro(Newtotalmoles, NewResname, natoms)
-                    #AddGMXGro(ADMol, "BQ%s" % NewResname, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
+                    #AddGMXGro(ADMol, NewGroName, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
                     resid, natom = WirteGMXGro(Newtotalmoles, NewGroName, natoms)
-                    AddGMXGro(ADMol, NewGroName, resid, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1), natom, AIndex, DIndex, Anew, Dnew)
+                    AddGMXGro(ADMol, NewGroName, resid, "B%s" % ((TotalBondNumBegin-1) % 9999 + 1), natom, AIndex, DIndex, Anew, Dnew)
                     #'''
                     # create new molecule itp file
                     os.system('cp %s.itp tmpA%s.itp' % (Aname,TotalBondNumBegin))
@@ -1227,8 +1227,8 @@ def main(options):
                 NewGroFile.write("%10.5f%10.5f%10.5f\n" % (boxsize[0], boxsize[1], boxsize[2]))
                 NewGroFile.close()
                 # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
-                if TotalBondNumBegin > 999:
-                    os.system("sed -i 's/1%s/1  %s/' BQ%s.itp" % (NewResname, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1) ,TotalBondNumBegin))
+                if TotalBondNumBegin > 9999:
+                    os.system("sed -i 's/1%s/1  %s/' C%s.itp" % (NewResname, "B%s" % ((TotalBondNumBegin-1) % 999 + 1) ,TotalBondNumBegin))
 
                 # back off infromation
                 os.system("mkdir BondSteep-%s >& /dev/null" % TotalBondNumBegin)
@@ -1249,30 +1249,30 @@ def main(options):
                   (TotalBondNumBegin-1,TotalBondNum-TotalBondNumBegin+1))
             os.system("mkdir BondSteepFailed >& /dev/null")
             os.system("cp *.gro *.top *.itp ./BondSteepFailed >& /dev/null")
-            os.system("cp ./BondSteepFailed/BQ%s.top ./BondSteepFailed/Failed.top >& /dev/null" % (TotalBondNumBegin))
+            os.system("cp ./BondSteepFailed/B%s.top ./BondSteepFailed/Failed.top >& /dev/null" % (TotalBondNumBegin))
             os.system("cp ./BondSteepFailed/md%s.gro ./BondSteepFailed/Failed.gro >& /dev/null" % (TotalBondNumBegin))
             os.system('rm -rf *.log ./#* *.xtc *.edr *.cpt *.trr *.tpr mdout.mdp '
-                      'md*.gro em*.gro tmp*.gro BQ* >& /dev/null')
+                      'md*.gro em*.gro tmp*.gro B* >& /dev/null')
             print("!!!The all Failed file is in the 'BondSteepFailed' folder!!!")
             EndTime = time.time()
             TotalTime = EndTime-StartTime
             HMS = datetime.timedelta(seconds=TotalTime)
             print('!!! it costs %s !!!' % HMS)
             sys.exit()
-        os.system("mv BQ%s.top BQ%s.top" % (TotalBondNumBegin,TotalBondNumBegin + 1))
+        os.system("mv B%s.top B%s.top" % (TotalBondNumBegin,TotalBondNumBegin + 1))
         TotalBondNumBegin += 1
     ###################################################################################################
     ##
     if TotalBondNumBegin > TotalBondNum:
         os.system("mkdir BondSteepSuccess >& /dev/null")
-        os.system('gmx grompp -f %s -c tmp%s.gro -p BQ%s.top -o Success.tpr -maxwarn 2 >& /dev/null' %
+        os.system('gmx grompp -f %s -c tmp%s.gro -p B%s.top -o Success.tpr -maxwarn 2 >& /dev/null' %
                   (MinimFile,TotalBondNumBegin-1,TotalBondNumBegin))
         os.system('gmx mdrun -deffnm Success >& /dev/null')
-        os.system('gmx grompp -f %s -c Success.gro -p BQ%s.top -o Success.tpr -maxwarn 2 >& /dev/null' %
+        os.system('gmx grompp -f %s -c Success.gro -p B%s.top -o Success.tpr -maxwarn 2 >& /dev/null' %
                   (MdFile,TotalBondNumBegin))
         os.system('gmx mdrun -deffnm Success >& /dev/null')
         os.system("cp *.gro *.top *.itp ./BondSteepSuccess")
-        os.system("cp ./BondSteepSuccess/BQ%s.top ./BondSteepSuccess/Success.top" % (TotalBondNumBegin))
+        os.system("cp ./BondSteepSuccess/B%s.top ./BondSteepSuccess/Success.top" % (TotalBondNumBegin))
         print("!!!                Program completion              !!!")
         print("There are formed %s bond, %s bonds are still unformed" %
               (TotalBondNumBegin-1,TotalBondNum-TotalBondNumBegin+1))
@@ -1282,7 +1282,7 @@ def main(options):
         HMS = datetime.timedelta(seconds=TotalTime)
         print('!!! it costs %s !!!' % HMS)
         os.system('rm -rf *.log ./#* *.xtc *.edr *.cpt *.trr *.tpr mdout.mdp '
-                  'md*.gro em*.gro tmp*.gro Success*.gro BQ* >& /dev/null')
+                  'md*.gro em*.gro tmp*.gro Success*.gro B* >& /dev/null')
         sys.exit()
 
 ##########################################################################################################
