@@ -1228,7 +1228,7 @@ def main(options):
                 NewGroFile.close()
                 # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
                 if TotalBondNumBegin > 9999:
-                    os.system("sed -i 's/1%s/1  %s/' C%s.itp" % (NewResname, "B%s" % ((TotalBondNumBegin-1) % 999 + 1) ,TotalBondNumBegin))
+                    os.system("sed -i 's/1%s/1  %s/' B%s.itp" % (NewResname, "C%s" % ((TotalBondNumBegin-1) % 999 + 1) ,TotalBondNumBegin))
 
                 # back off infromation
                 os.system("mkdir BondSteep-%s >& /dev/null" % TotalBondNumBegin)
