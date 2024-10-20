@@ -888,6 +888,7 @@ def main(options):
         NewGroName = "tmp%s.gro" % TotalBondNumBegin
         filename = "md%s.gro" % TotalBondNumBegin
         TopFile = "BQ%s.top" % TotalBondNumBegin
+        #NewResname = "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1)
         NewResname = "BQ%s" % TotalBondNumBegin
         MaxRunGmxTimeBegin = 1
         while MaxRunGmxTimeBegin <= MaxRunGmxTime:
@@ -987,17 +988,23 @@ def main(options):
                     ADMolIndexList.append(DMolIndex)
                     Newtotalmoles = totalmoles
                     Newtotalmoles.pop(max(ADMolIndexList))
+                    # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
+                    #resid, natom = WirteGMXGro(Newtotalmoles, NewResname, natoms)
+                    #AddGMXGro(ADMol, NewGroName, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
                     resid, natom = WirteGMXGro(Newtotalmoles, NewGroName, natoms)
-                    AddGMXGro(ADMol, NewGroName, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
+                    AddGMXGro(ADMol, NewGroName, resid, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1), natom, AIndex, DIndex, Anew, Dnew)
                     #'''
                     # create new molecule itp file
                     os.system('cp %s.itp %s.itp' % (Aname, NewResname))
                     os.system("sed -i 's/%s/%s/' %s.itp" % (Aname, NewResname, NewResname))
+                    #os.system("sed -i 's/%s/%s/' %s.itp" % (Aname, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1), NewResname))
                     # replace itp file of A atom to new type
                     keyword = r'\s'+str(AIndex + 1)+'\s.*\s'+str(NewResname)+'\s.*\s'+str(Aatomname)+'\s'
+                    #keyword = r'\s'+str(AIndex + 1)+'\s.*\s'+str("BQ%s" % ((TotalBondNumBegin-1) % 999 + 1))+'\s.*\s'+str(Aatomname)+'\s'
                     ReplaceItpFile(str(NewResname) + ".itp", keyword, Atype, Anew)
                     # replace itp file of D atom to new type
                     keyword = r'\s'+str(DIndex + 1)+'\s.*\s'+str(NewResname)+'\s.*\s'+str(Datomname)+'\s'
+                    #keyword = r'\s'+str(DIndex + 1)+'\s.*\s'+str("BQ%s" % ((TotalBondNumBegin-1) % 999 + 1))+'\s.*\s'+str(Datomname)+'\s'
                     ReplaceItpFile(str(NewResname) + ".itp", keyword, Dtype, Dnew)
                     # add the bond information in the itp file
                     LineNum = GetLineNum(str(NewResname) + ".itp", "bonds")[0][0]
@@ -1093,8 +1100,11 @@ def main(options):
                     Newtotalmoles = totalmoles
                     Newtotalmoles.pop(max(ADMolIndexList))
                     Newtotalmoles.pop(min(ADMolIndexList))
+                    # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
+                    #resid, natom = WirteGMXGro(Newtotalmoles, NewResname, natoms)
+                    #AddGMXGro(ADMol, "BQ%s" % NewResname, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
                     resid, natom = WirteGMXGro(Newtotalmoles, NewGroName, natoms)
-                    AddGMXGro(ADMol, NewGroName, resid, NewResname, natom, AIndex, DIndex, Anew, Dnew)
+                    AddGMXGro(ADMol, NewGroName, resid, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1), natom, AIndex, DIndex, Anew, Dnew)
                     #'''
                     # create new molecule itp file
                     os.system('cp %s.itp tmpA%s.itp' % (Aname,TotalBondNumBegin))
@@ -1216,6 +1226,10 @@ def main(options):
                 NewGroFile = open(NewGroName, 'a')
                 NewGroFile.write("%10.5f%10.5f%10.5f\n" % (boxsize[0], boxsize[1], boxsize[2]))
                 NewGroFile.close()
+                # Fixed the issue of residue names exceeding 5 fields when the number of keys exceeds 1000  2024-10-18 Jianchuanliu
+                if TotalBondNumBegin > 999:
+                    os.system("sed -i 's/1%s/1  %s/' BQ%s.itp" % (NewResname, "BQ%s" % ((TotalBondNumBegin-1) % 999 + 1) ,TotalBondNumBegin))
+
                 # back off infromation
                 os.system("mkdir BondSteep-%s >& /dev/null" % TotalBondNumBegin)
                 os.system("cp *.gro *.top *.itp ./BondSteep-%s" % TotalBondNumBegin)
