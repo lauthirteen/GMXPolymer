@@ -153,9 +153,9 @@ def RunGmx(TopFile,Number,MinimFile,MdFile):
     print("Gromacs program is runing...")
     # call gromacs program
     os.system('rm -rf  run.log ./#* *.edr *.cpt *.trr *.tpr md*.gro em*.gro >& /dev/null')
-    os.system('gmx grompp -f %s -c tmp%s.gro -p %s -o em%s.tpr -maxwarn 2 >& pre_em.log' % (MinimFile,Number-1,TopFile,Number))
+    os.system('gmx grompp -f %s -c tmp%s.gro -p %s -o em%s.tpr -maxwarn 12 >& pre_em.log' % (MinimFile,Number-1,TopFile,Number))
     os.system('gmx mdrun -deffnm em%s -nt 6 -v >& run_em.log' % Number)
-    os.system('gmx grompp -f %s -c em%s.gro -p %s -o md%s.tpr -maxwarn 2 >& pre_md.log' % (MdFile,Number,TopFile,Number))
+    os.system('gmx grompp -f %s -c em%s.gro -p %s -o md%s.tpr -maxwarn 12 >& pre_md.log' % (MdFile,Number,TopFile,Number))
     os.system('gmx mdrun -deffnm md%s  -nt 6 -v >& run_md.log' % Number)
     os.system('echo 0 | gmx trjconv -f md%s.gro -s md%s.tpr -o md%s.gro -pbc whole >& /dev/null' % (Number,Number,Number))
     os.system('rm  ./#*  *.edr *.trr *.tpr *.cpt *.xtc em*.gro >& /dev/null')
