@@ -1079,10 +1079,10 @@ def main(options):
                         MolName = info[0]
                         Mole = info[1]
                         if MolName == Aname or MolName == Dname:
-                            if MolName == Aname:
-                                Mole = int(Mole) - 1
-                            if MolName == Dname:
-                                Mole = int(Mole) - 1
+                            #if MolName == Aname:   ///// Jianchuan Liu modified 2025-10-26
+                            Mole = int(Mole) - 1
+                            #if MolName == Dname:   ///// Jianchuan Liu modified 2025-10-26
+                            #    Mole = int(Mole) - 1
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                         else:
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
@@ -1252,7 +1252,7 @@ def main(options):
             os.system("cp ./BondSteepFailed/B%s.top ./BondSteepFailed/Failed.top >& /dev/null" % (TotalBondNumBegin))
             os.system("cp ./BondSteepFailed/md%s.gro ./BondSteepFailed/Failed.gro >& /dev/null" % (TotalBondNumBegin))
             os.system('rm -rf *.log ./#* *.xtc *.edr *.cpt *.trr *.tpr mdout.mdp '
-                      'md*.gro em*.gro tmp*.gro B* >& /dev/null')
+                      'md*.gro em*.gro tmp*.gro B*.itp B*.top  >& /dev/null')
             print("!!!The all Failed file is in the 'BondSteepFailed' folder!!!")
             EndTime = time.time()
             TotalTime = EndTime-StartTime
@@ -1282,7 +1282,7 @@ def main(options):
         HMS = datetime.timedelta(seconds=TotalTime)
         print('!!! it costs %s !!!' % HMS)
         os.system('rm -rf *.log ./#* *.xtc *.edr *.cpt *.trr *.tpr mdout.mdp '
-                  'md*.gro em*.gro tmp*.gro Success*.gro B* >& /dev/null')
+                  'md*.gro em*.gro tmp*.gro Success*.gro B*.itp B*.top >& /dev/null')
         sys.exit()
 
 ##########################################################################################################
