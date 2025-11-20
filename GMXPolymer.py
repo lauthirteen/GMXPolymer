@@ -362,19 +362,19 @@ def ReplaceItpFile(filename, keyword, NewType, NewAtom):
         Empty = ""
         for info in AtomLineList:
             if AtomLineList.index(info) == 0:
-                Empty += '%6d' % int(info)
+                Empty += '%6d ' % int(info)
             elif AtomLineList.index(info) == 1:
-                Empty += '%5s' % info
+                Empty += '%5s ' % info
             elif AtomLineList.index(info) == 2:
-                Empty += '%6d' % int(info)
+                Empty += '%6d ' % int(info)
             elif AtomLineList.index(info) == 3:
-                Empty += '%6s' % info
+                Empty += '%6s ' % info
             elif AtomLineList.index(info) == 4:
-                Empty += '%6s' % info
+                Empty += '%6s ' % info
             elif AtomLineList.index(info) == 5:
-                Empty += '%4d' % int(info)
+                Empty += '%4d ' % int(info)
             elif AtomLineList.index(info) == 6 or AtomLineList.index(info) == 7:
-                Empty += '%13.5f' % float(info)
+                Empty += '%13.5f ' % float(info)
             else:
                 Empty += '%10s' % info
         ItpDetail[LineBegin[0] - 1] = Empty + "\n"
@@ -1079,8 +1079,8 @@ def main(options):
                         MolName = info[0]
                         Mole = info[1]
                         if MolName == Aname or MolName == Dname:
-                            #if MolName == Aname:   ///// Jianchuan Liu modified 2025-10-26
-                            Mole = int(Mole) - 1
+                            if MolName == Aname:
+                                Mole = int(Mole) - 1
                             #if MolName == Dname:   ///// Jianchuan Liu modified 2025-10-26
                             #    Mole = int(Mole) - 1
                             os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
