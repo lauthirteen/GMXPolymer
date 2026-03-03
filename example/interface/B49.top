@@ -1,0 +1,136 @@
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.8333333333
+
+[ atomtypes ]
+;name   bond_type     mass     charge   ptype   sigma         epsilon       Amb
+ ca       ca          0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ ha       ha          0.00000  0.00000   A     2.59964e-01   6.27600e-02 ; 1.46  0.0150
+ ce       ce          0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ o        o           0.00000  0.00000   A     2.95992e-01   8.78640e-01 ; 1.66  0.2100
+ c        c           0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ c2       c2          0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ cf       cf          0.00000  0.00000   A     3.39967e-01   3.59824e-01 ; 1.91  0.0860
+ ca       ca          0.00000  0.00000   A     3.31521e-01   4.13379e-01 ; 1.86  0.0988
+ ha       ha          0.00000  0.00000   A     2.62548e-01   6.73624e-02 ; 1.47  0.0161
+ cl       cl          0.00000  0.00000   A     3.46595e-01   1.10374e+00 ; 1.95  0.2638
+ c3       c3          0.00000  0.00000   A     3.39771e-01   4.51035e-01 ; 1.91  0.1078
+ n7       n7          0.00000  0.00000   A     3.50765e-01   2.18405e-01 ; 1.97  0.0522
+ h1       h1          0.00000  0.00000   A     2.42200e-01   8.70272e-02 ; 1.36  0.0208
+ hn       hn          0.00000  0.00000   A     1.10650e-01   4.18400e-02 ; 0.62  0.0100
+ hc       hc          0.00000  0.00000   A     2.60018e-01   8.70272e-02 ; 1.46  0.0208
+ os       os          0.00000  0.00000   A     3.15610e-01   3.03758e-01 ; 1.77  0.0726
+OW_spc       8      15.9994  0.0000  A   3.16557e-01  6.50629e-01
+HW_spc       1       1.0080  0.0000  A   0.00000e+00  0.00000e+00
+
+
+#include "C6H.itp"
+#include "CLX.itp"
+
+#include "SOL.itp"
+#include "THR.itp"
+
+#include "./B1.itp"
+#include "./B2.itp"
+#include "./B3.itp"
+#include "./B4.itp"
+#include "./B5.itp"
+#include "./B6.itp"
+#include "./B7.itp"
+#include "./B8.itp"
+#include "./B9.itp"
+#include "./B10.itp"
+#include "./B11.itp"
+#include "./B12.itp"
+#include "./B13.itp"
+#include "./B14.itp"
+#include "./B15.itp"
+#include "./B16.itp"
+#include "./B17.itp"
+#include "./B18.itp"
+#include "./B19.itp"
+#include "./B20.itp"
+#include "./B21.itp"
+#include "./B22.itp"
+#include "./B23.itp"
+#include "./B24.itp"
+#include "./B25.itp"
+#include "./B26.itp"
+#include "./B27.itp"
+#include "./B28.itp"
+#include "./B29.itp"
+#include "./B30.itp"
+#include "./B31.itp"
+#include "./B32.itp"
+#include "./B33.itp"
+#include "./B34.itp"
+#include "./B35.itp"
+#include "./B36.itp"
+#include "./B37.itp"
+#include "./B38.itp"
+#include "./B39.itp"
+#include "./B40.itp"
+#include "./B41.itp"
+#include "./B42.itp"
+#include "./B43.itp"
+#include "./B44.itp"
+#include "./B45.itp"
+#include "./B46.itp"
+#include "./B47.itp"
+#include "./B48.itp"
+[ system ]
+ AAA
+
+[ molecules ]
+ THR        67
+ SOL        5000
+ CLX        453
+ C6H        1000
+ B1        0
+ B2        1
+ B3        0
+ B4        1
+ B5        0
+ B6        1
+ B7        1
+ B8        1
+ B9        1
+ B10        1
+ B11        1
+ B12        0
+ B13        0
+ B14        1
+ B15        0
+ B16        1
+ B17        0
+ B18        1
+ B19        0
+ B20        0
+ B21        1
+ B22        0
+ B23        0
+ B24        1
+ B25        1
+ B26        0
+ B27        0
+ B28        1
+ B29        0
+ B30        0
+ B31        1
+ B32        1
+ B33        1
+ B34        0
+ B35        1
+ B36        1
+ B37        1
+ B38        1
+ B39        1
+ B40        1
+ B41        1
+ B42        1
+ B43        1
+ B44        1
+ B45        1
+ B46        1
+ B47        1
+ B48        1

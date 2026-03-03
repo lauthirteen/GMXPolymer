@@ -1,0 +1,23 @@
+tolerance 2.0
+filetype pdb
+output out.pdb
+
+structure  THR.pdb
+  number 100
+  inside box 0. 0. 0. 100. 100. 50.
+end structure
+
+structure  water.pdb
+  number 5000
+  inside box 0. 0. 0. 100. 100. 50.
+end structure
+
+structure  CLX.pdb
+  number 500
+  inside box 0. 0. 50. 100. 100. 100.
+end structure
+
+structure  C6H.pdb
+  number 1000
+  inside box 0. 0. 50. 100. 100. 100.
+end structure

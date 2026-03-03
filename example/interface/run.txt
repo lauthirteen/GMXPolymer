@@ -1,0 +1,1 @@
+nohup python -u GMXPolymer.py -g in.gro -t top.top -e minim.mdp -m md.mdp -n 6000 -max 0.5 -min 0.1 -i Y -b Bond.dat -r 0 > out.log 2>&1 &

@@ -770,31 +770,14 @@ def GetThreeDimListLine(threedimlist,number):
     k = 0
     for info in threedimlist:
         if k == number - 1:
+            #print("00000")
+            #print(info,info[0][0])
+            molresname = info[0][0]
             break
         k += 1
         for info1 in info:
             n += 1
-    return n
-#
-def GetMolName(TopFile,AtomNum):
-    '''
-
-    :param TopFile:
-    :param AtomNum:
-    :return:
-    '''
-    topnum = GetItpFrag(TopFile, "molecules")[1]
-    num = 0
-    for info in topnum:
-        molname = info[0]
-        molnum = int(info[1])
-        #print(molname,molnum)
-        atomtotalnum = int(len((GetItpFrag(molname +".itp", "atoms")[1]))) * molnum
-        num += atomtotalnum
-        if AtomNum <= num:
-            MolName = molname
-            break
-    return MolName
+    return n, molresname
 #
 def GetNeighAtom(ItpFile,Aatom,Datom):
     '''
@@ -922,6 +905,8 @@ def main(options):
                             if float(ADdist) < MinDist and float(ADdist) >= CutOffMin:
                                 AMolIndex = info2
                                 DMolIndex = info4
+                                #print("11111")
+                                #print(AMolIndex,DMolIndex)
                                 '''
                                 AAtomNum = len(totalmoles[AMolIndex])
                                 DAtomNum = len(totalmoles[DMolIndex])
@@ -969,10 +954,8 @@ def main(options):
                             sys.exit()
             AResname = totalmoles[AMolIndex][0][0]
             DResname = totalmoles[DMolIndex][0][0]
-            Anum = GetThreeDimListLine(totalmoles, AMolIndex + 1)
-            Dnum = GetThreeDimListLine(totalmoles, DMolIndex + 1)
-            Aname = GetMolName(TopFile, Anum)
-            Dname = GetMolName(TopFile, Dnum)
+            Anum, Aname = GetThreeDimListLine(totalmoles, AMolIndex + 1) # Fixed the issue of residue name recognition errors in various molecular simulation processes. 2026-03-03 Jianchuanliu
+            Dnum, Dname = GetThreeDimListLine(totalmoles, DMolIndex + 1) 
             AMol = totalmoles[AMolIndex]
             DMol = totalmoles[DMolIndex]
             ###
