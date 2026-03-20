@@ -5,82 +5,202 @@ https://www.simuhome.cn/forum.php?mod=viewthread&tid=110&extra=page%3D1
 
 # 交联处理工具集
 
-## 1. delete_itp_atom.py - ITP文件原子删除工具
+## 1. delete_itp_gro_atom.py - GROMACS ITP/GRO 原子删除工具
 
-### 功能说明
+## 功能概述
 
-该工具用于从GROMACS ITP（Include Topology）文件中删除指定的原子，并自动重新编号所有相关的拓扑参数。
+`delete_itp_gro_atom.py` 是一个用于GROMACS分子动力学模拟的原子删除工具，可以从ITP拓扑文件和GRO坐标文件中删除指定的原子，并自动重新编号所有相关参数。
 
-### 主要功能
+### 核心功能
 
-- 解析ITP文件的各个节（[ atoms ]、[ bonds ]、[ pairs ]、[ angles ]、[ dihedrals ]）
-- 删除指定的原子
-- 自动删除与被删原子相关的键、角度、二面角等参数
-- 重新编号所有保留的原子和相关参数
-- 将被删原子的电荷平均分配到剩余原子上
-- 输出修改后的ITP文件
+1. **ITP文件处理**
+   - 删除指定的原子定义
+   - 删除包含被删原子的键（bonds）
+   - 删除包含被删原子的非键对（pairs）
+   - 删除包含被删原子的键角（angles）
+   - 删除包含被删原子的二面角（dihedrals）
+   - 自动重新编号所有保留的原子和参数
+   - 将被删原子的电荷平均分配到剩余原子上
 
-### 使用方法
+2. **GRO文件处理**（可选）
+   - 删除指定原子的坐标
+   - 自动重新编号原子序号
+   - 自动重新编号残基序号
 
-#### 程序函数
+## 使用方法
 
-```python
-from delete_itp_atom import parse_itp_file, delete_atoms_and_renumber, write_itp_file
+### 命令行语法
 
-# 1. 解析ITP文件
-itp_data = parse_itp_file("input.itp")
-
-# 2. 指定要删除的原子ID列表
-atoms_to_delete = [11, 298]
-
-# 3. 计算剩余原子数
-atoms = itp_data.get('atoms')
-atom_num = len(atoms) - len(atoms_to_delete)
-
-# 4. 删除原子并重新编号
-modified_data, id_mapping = delete_atoms_and_renumber(itp_data, atoms_to_delete, atom_num)
-
-# 5. 写入新的ITP文件
-write_itp_file(modified_data, "output.itp")
+```bash
+python delete_itp_gro_atom.py -i <itp文件> -d <原子ID> [选项]
 ```
 
-#### 直接运行脚本
+### 命令行参数
 
-修改脚本末尾的参数后直接运行：
+| 参数 | 说明 | 必填 |
+|------|------|:----:|
+| `-i, --itp` | 输入的ITP文件路径 | ✓ |
+| `-g, --gro` | 输入的GRO文件路径 | |
+| `-d, --delete` | 要删除的原子ID列表（空格分隔） | ✓ |
+| `-oi, --output-itp` | 输出的ITP文件路径 | |
+| `-og, --output-gro` | 输出的GRO文件路径 | |
 
-```python
-# 设置参数
-itp_file = "LMW.itp"           # 输入ITP文件
-atoms_to_delete = [11, 298]    # 要删除的原子ID
+### 使用示例
 
-# 运行
-python delete_itp_atom.py
+```bash
+# 只处理ITP文件
+python delete_itp_gro_atom.py -i TMC.itp -d 11 13 15
+
+# 同时处理ITP和GRO文件
+python delete_itp_gro_atom.py -i TMC.itp -g TMC.gro -d 11 13 15
+
+# 指定输出文件名
+python delete_itp_gro_atom.py -i TMC.itp -g TMC.gro -d 11 13 15 -oi TMC_new.itp -og TMC_new.gro
+
+# 查看帮助
+python delete_itp_gro_atom.py --help
 ```
 
-输出文件将保存为 `modified.itp`
+## 输入文件格式
 
-### 参数说明
+### ITP文件
 
-| 参数 | 说明 |
-|------|------|
-| `itp_file` | 输入的ITP文件路径 |
-| `atoms_to_delete` | 要删除的原子ID列表（从1开始） |
+标准GROMACS ITP文件，包含以下节：
 
-### 支持的ITP节
+```
+[ moleculetype ]
+;moleculename  nrexcl
+TMC     3
 
-- [ moleculetype ] - 分子类型信息
-- [ atoms ] - 原子定义
-- [ bonds ] - 键参数
-- [ pairs ] - 非键对参数
-- [ angles ] - 键角参数
-- [ dihedrals ] - 二面角参数
+[ atoms ]
+;   nr  type  resi  res  atom  cgnr     charge      mass
+    1    ca     1  TMC     C     1  -0.213520   12.01000
+    ...
 
-### 注意事项
+[ bonds ]
+;   ai     aj funct   r             k
+     1      2 1 1.3980e-01 3.1681e+05
+    ...
 
-1. 原子ID从1开始编号
-2. 删除原子后，其电荷会平均分配到所有剩余原子上
-3. 所有包含被删原子的键、角度、二面角都会被删除
-4. 原子ID会自动重新编号，保持连续性
+[ angles ]
+...
+
+[ dihedrals ]
+...
+```
+
+### GRO文件
+
+标准GROMACS GRO文件：
+
+```
+标题行
+原子数
+残基号 残基名 原子名 原子号 x坐标 y坐标 z坐标 [速度x 速度y 速度z]
+...
+box尺寸
+```
+
+## 输出说明
+
+### 默认输出文件名
+
+- ITP文件：`输入文件名_modified.itp`
+- GRO文件：`输入文件名_modified.gro`
+
+### 输出内容
+
+脚本会输出详细的处理信息：
+
+```
+============================================================
+GROMACS ITP/GRO 原子删除工具
+============================================================
+
+[1] 处理ITP文件: TMC.itp
+    要删除的原子ID: [11, 13, 15]
+    原始原子数: 15
+    删除后原子数: 12
+
+    要删除的原子:
+      ID=11: O (o)
+      ID=13: O1 (o)
+      ID=15: O2 (o)
+
+    已保存修改后的ITP文件: TMC_modified.itp
+
+    原子ID映射 (旧 -> 新):
+      1 -> 1
+      2 -> 2
+      ...
+      12 -> 11
+      14 -> 12
+
+[2] 处理GRO文件: TMC.gro
+  原始gro文件原子数: 15
+  删除后原子数: 12
+  删除了 3 个原子
+  已保存到: TMC_modified.gro
+
+============================================================
+处理完成!
+============================================================
+```
+
+## 处理逻辑
+
+### 原子删除流程
+
+1. **解析ITP文件**：读取所有节（atoms, bonds, pairs, angles, dihedrals）
+2. **删除指定原子**：从atoms节中删除指定ID的原子
+3. **电荷重新分配**：将被删原子的电荷平均分配到剩余原子
+4. **重新编号原子**：为保留的原子分配新的连续ID
+5. **更新键参数**：删除包含被删原子的键，更新保留键中的原子ID
+6. **更新角度参数**：删除包含被删原子的角度，更新保留角度中的原子ID
+7. **更新二面角参数**：删除包含被删原子的二面角，更新保留二面角中的原子ID
+8. **处理GRO文件**（如果提供）：删除对应原子坐标，重新编号
+
+### ID映射
+
+脚本会生成旧原子ID到新原子ID的映射：
+
+```
+旧ID -> 新ID
+  1  ->  1
+  2  ->  2
+  ...
+ 10  -> 10
+ 12  -> 11  (11被删除，12变成11)
+ 14  -> 12  (13被删除，14变成12)
+```
+
+## 典型应用场景
+
+### 场景1：删除原子封端
+
+删除分子末端的官能团：
+
+```bash
+# 删除TMC分子的三个酰氯基团的氧原子
+python delete_itp_gro_atom.py -i TMC.itp -g TMC.gro -d 11 13 15
+```
+
+### 场景2：删除氢原子
+
+简化模型，删除所有氢原子：
+
+```bash
+# 假设氢原子ID为 7, 8, 9
+python delete_itp_gro_atom.py -i molecule.itp -d 7 8 9
+```
+
+### 场景3：只修改拓扑
+
+只修改ITP文件，不处理GRO：
+
+```bash
+python delete_itp_gro_atom.py -i molecule.itp -d 5 10 15
+```
 
 ## 2. Breakpoint_extraction.py - 模拟断点文件提取工具
 
@@ -381,7 +501,8 @@ python remove_molecules.py -f top.top -g init.gro -m Water Ions --zero-count
 
 ## 作者信息
 
--  Jianchuan Liu, Xihua University, liujianchuan@xhu.edu.cn
+- Jianchuan Liu, Xihua University, liujianchuan@xhu.edu.cn
+- 更新日期：2026-03-20
 
 ## 许可
 

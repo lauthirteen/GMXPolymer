@@ -1,6 +1,198 @@
 # -*- coding: utf-8 -*-
 import re
+import os
+import argparse
 from collections import defaultdict
+
+##################################################################
+# Gro文件处理函数
+##################################################################
+
+def parse_gro_file(gro_file):
+    """
+    解析GROMACS GRO文件
+    
+    返回:
+    title: 标题行
+    atoms: 原子信息列表
+    box: box尺寸
+    """
+    with open(gro_file, 'r') as f:
+        lines = f.readlines()
+    
+    title = lines[0].strip()
+    num_atoms = int(lines[1].strip())
+    
+    atoms = []
+    for i in range(2, 2 + num_atoms):
+        line = lines[i]
+        atom = {
+            'residue_num': int(line[0:5]),
+            'residue_name': line[5:10].strip(),
+            'atom_name': line[10:15].strip(),
+            'atom_num': int(line[15:20]),
+            'x': float(line[20:28]),
+            'y': float(line[28:36]),
+            'z': float(line[36:44]),
+            'has_velocity': len(line.strip()) > 44,
+            'vx': 0.0,
+            'vy': 0.0,
+            'vz': 0.0,
+            'raw_line': line
+        }
+        
+        if atom['has_velocity']:
+            try:
+                atom['vx'] = float(line[44:52])
+                atom['vy'] = float(line[52:60])
+                atom['vz'] = float(line[60:68])
+            except:
+                atom['has_velocity'] = False
+        
+        atoms.append(atom)
+    
+    # 解析box尺寸
+    box_line = lines[2 + num_atoms].strip() if len(lines) > 2 + num_atoms else ""
+    
+    return title, atoms, box_line
+
+
+def delete_gro_atoms(atoms, atom_ids_to_delete, id_mapping):
+    """
+    从gro原子列表中删除指定原子，并根据id_mapping更新原子序号
+    
+    参数:
+    atoms: 原子信息列表
+    atom_ids_to_delete: 要删除的itp原子ID列表（字符串）
+    id_mapping: itp旧ID到新ID的映射字典
+    
+    返回:
+    new_atoms: 删除并重新编号后的原子列表
+    """
+    # 将要删除的ID转换为整数集合
+    ids_to_delete = set(int(id) for id in atom_ids_to_delete)
+    
+    # 构建itp旧ID到新ID的映射（整数到整数）
+    old_to_new = {}
+    for old_id, new_id in id_mapping.items():
+        old_to_new[int(old_id)] = int(new_id)
+    
+    new_atoms = []
+    new_atom_num = 1
+    
+    for atom in atoms:
+        old_atom_num = atom['atom_num']
+        
+        # 如果这个原子对应的itp原子ID在删除列表中，跳过
+        if old_atom_num in ids_to_delete:
+            continue
+        
+        # 更新原子序号
+        atom['atom_num'] = old_to_new.get(old_atom_num, new_atom_num)
+        new_atoms.append(atom)
+    
+    # 如果映射不完整，需要重新连续编号
+    if len(old_to_new) < len(new_atoms):
+        for i, atom in enumerate(new_atoms, 1):
+            atom['atom_num'] = i
+    
+    return new_atoms
+
+
+def renumber_gro_residues(atoms):
+    """
+    重新连续编号残基
+    
+    参数:
+    atoms: 原子信息列表
+    
+    返回:
+    atoms: 残基重新编号后的原子列表
+    """
+    residue_map = {}
+    new_res_num = 1
+    
+    for atom in atoms:
+        old_res_num = atom['residue_num']
+        if old_res_num not in residue_map:
+            residue_map[old_res_num] = new_res_num
+            new_res_num += 1
+        atom['residue_num'] = residue_map[old_res_num]
+    
+    return atoms
+
+
+def write_gro_file(title, atoms, box_line, output_file):
+    """
+    将原子信息写入GRO文件
+    
+    参数:
+    title: 标题行
+    atoms: 原子信息列表
+    box_line: box尺寸行
+    output_file: 输出文件路径
+    """
+    with open(output_file, 'w') as f:
+        # 写入标题
+        f.write(f"{title}\n")
+        
+        # 写入原子数
+        f.write(f"{len(atoms):5d}\n")
+        
+        # 写入原子坐标
+        for atom in atoms:
+            if atom['has_velocity']:
+                line = (f"{atom['residue_num']:5d}"
+                       f"{atom['residue_name']:5s}"
+                       f"{atom['atom_name']:>5s}"
+                       f"{atom['atom_num']:5d}"
+                       f"{atom['x']:8.3f}"
+                       f"{atom['y']:8.3f}"
+                       f"{atom['z']:8.3f}"
+                       f"{atom['vx']:8.4f}"
+                       f"{atom['vy']:8.4f}"
+                       f"{atom['vz']:8.4f}\n")
+            else:
+                line = (f"{atom['residue_num']:5d}"
+                       f"{atom['residue_name']:5s}"
+                       f"{atom['atom_name']:>5s}"
+                       f"{atom['atom_num']:5d}"
+                       f"{atom['x']:8.3f}"
+                       f"{atom['y']:8.3f}"
+                       f"{atom['z']:8.3f}\n")
+            f.write(line)
+        
+        # 写入box尺寸
+        f.write(f"{box_line}\n")
+
+
+def process_gro_file(gro_file, atoms_to_delete, id_mapping, output_file):
+    """
+    处理gro文件：删除原子并重新编号
+    
+    参数:
+    gro_file: 输入gro文件路径
+    atoms_to_delete: 要删除的原子ID列表
+    id_mapping: itp旧ID到新ID的映射
+    output_file: 输出gro文件路径
+    """
+    # 解析gro文件
+    title, atoms, box_line = parse_gro_file(gro_file)
+    
+    print(f"  原始gro文件原子数: {len(atoms)}")
+    
+    # 删除原子并重新编号
+    new_atoms = delete_gro_atoms(atoms, atoms_to_delete, id_mapping)
+    
+    # 重新编号残基
+    new_atoms = renumber_gro_residues(new_atoms)
+    
+    print(f"  删除后原子数: {len(new_atoms)}")
+    print(f"  删除了 {len(atoms) - len(new_atoms)} 个原子")
+    
+    # 写入新文件
+    write_gro_file(title, new_atoms, box_line, output_file)
+    print(f"  已保存到: {output_file}")
 
 def parse_itp_file(file_path):
     """
@@ -399,28 +591,93 @@ def write_itp_file(itp_data, output_file):
         '''
 # 使用示例
 if __name__ == "__main__":
-    #######################################################
-    # itp 名称
-    itp_file = "LMW.itp"
-    # 要删除的原子ID列表
-    atoms_to_delete = [11,298]  # 
-
-    #######################################################
+    parser = argparse.ArgumentParser(
+        description='GROMACS ITP/GRO 原子删除工具',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+使用示例:
+  # 只处理ITP文件
+  python delete_itp_atom.py -i TMC.itp -d 11 13 15
+  
+  # 同时处理ITP和GRO文件
+  python delete_itp_atom.py -i TMC.itp -g TMC.gro -d 11 13 15
+  
+  # 指定输出文件名
+  python delete_itp_atom.py -i TMC.itp -g TMC.gro -d 11 13 15 -oi TMC_new.itp -og TMC_new.gro
+        """
+    )
+    
+    parser.add_argument('-i', '--itp', required=True,
+                        help='输入的ITP文件路径')
+    parser.add_argument('-g', '--gro', default=None,
+                        help='输入的GRO文件路径（可选）')
+    parser.add_argument('-d', '--delete', nargs='+', type=int, required=True,
+                        help='要删除的原子ID列表')
+    parser.add_argument('-oi', '--output-itp', default=None,
+                        help='输出的ITP文件路径（默认: 输入文件名_modified.itp）')
+    parser.add_argument('-og', '--output-gro', default=None,
+                        help='输出的GRO文件路径（默认: 输入文件名_modified.gro）')
+    
+    args = parser.parse_args()
+    
+    # 设置默认输出文件名
+    itp_base = os.path.splitext(args.itp)[0]
+    output_itp = args.output_itp if args.output_itp else f"{itp_base}_modified.itp"
+    output_gro = args.output_gro if args.output_gro else (f"{os.path.splitext(args.gro)[0]}_modified.gro" if args.gro else None)
+    
+    itp_file = args.itp
+    gro_file = args.gro
+    atoms_to_delete = args.delete
+    
+    print("=" * 60)
+    print("GROMACS ITP/GRO 原子删除工具")
+    print("=" * 60)
+    
+    # 检查输入文件是否存在
+    if not os.path.exists(itp_file):
+        print(f"错误: ITP文件不存在: {itp_file}")
+        exit(1)
+    
+    if gro_file and not os.path.exists(gro_file):
+        print(f"错误: GRO文件不存在: {gro_file}")
+        exit(1)
+    
+    # 处理ITP文件
+    print(f"\n[1] 处理ITP文件: {itp_file}")
+    print(f"    要删除的原子ID: {atoms_to_delete}")
+    
     itp_data = parse_itp_file(itp_file)
-    #print(itp_data)
-    moleculetype = itp_data.get('moleculetype')
-    #print(moleculetype)
     atoms = itp_data.get('atoms')
-    #print(atoms)
-    bonds = itp_data.get('bonds')
-    #print(bonds)
-    pairs = itp_data.get('pairs')
-    #print(pairs)
-    angles = itp_data.get('angles')
-    #print(angles)
-    dihedrals = itp_data.get('dihedrals')
-    #print(dihedrals)
+    print(f"    原始原子数: {len(atoms)}")
+    
     atom_num = len(atoms) - len(atoms_to_delete)
-    #print(atom_num)
+    print(f"    删除后原子数: {atom_num}")
+    
+    # 打印要删除的原子信息
+    print(f"\n    要删除的原子:")
+    for atom_id in atoms_to_delete:
+        atom_id_str = str(atom_id)
+        if atom_id_str in atoms:
+            atom_info = atoms[atom_id_str]
+            print(f"      ID={atom_id}: {atom_info['atom']} ({atom_info['type']})")
+        else:
+            print(f"      ID={atom_id}: 未找到")
+    
+    # 删除原子并重新编号
     modified_data, id_mapping = delete_atoms_and_renumber(itp_data, atoms_to_delete, atom_num)
-    write_itp_file(modified_data, "modified.itp")
+    write_itp_file(modified_data, output_itp)
+    print(f"\n    已保存修改后的ITP文件: {output_itp}")
+    
+    # 打印ID映射
+    print(f"\n    原子ID映射 (旧 -> 新):")
+    for old_id, new_id in sorted(id_mapping.items(), key=lambda x: int(x[0])):
+        print(f"      {old_id} -> {new_id}")
+    
+    # 处理GRO文件
+    if gro_file:
+        print(f"\n[2] 处理GRO文件: {gro_file}")
+        process_gro_file(gro_file, atoms_to_delete, id_mapping, output_gro)
+    
+    print("\n" + "=" * 60)
+    print("处理完成!")
+    print("=" * 60)
