@@ -376,7 +376,7 @@ python remove_molecules.py -f top.top -g init.gro -m Water Ions --zero-count
 ## 系统要求
 
 - Python 3.6+
-- GROMACS（用于后续模拟）
+- GROMACS 2022 以上版本
 - 标准Python库：re, os, collections
 
 ## 作者信息
@@ -385,5 +385,5 @@ python remove_molecules.py -f top.top -g init.gro -m Water Ions --zero-count
 
 ## 许可
 
-本工具集供学术研究使用。
+本工具集供学术研究使用
 
