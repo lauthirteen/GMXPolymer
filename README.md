@@ -22,7 +22,7 @@ https://www.simuhome.cn/forum.php?mod=viewthread&tid=110&extra=page%3D1
 
 ### 使用方法
 
-#### 基本用法
+#### 程序函数
 
 ```python
 from delete_itp_atom import parse_itp_file, delete_atoms_and_renumber, write_itp_file
@@ -65,7 +65,6 @@ python delete_itp_atom.py
 |------|------|
 | `itp_file` | 输入的ITP文件路径 |
 | `atoms_to_delete` | 要删除的原子ID列表（从1开始） |
-| `atom_num` | 删除后的原子总数 |
 
 ### 支持的ITP节
 
@@ -87,7 +86,7 @@ python delete_itp_atom.py
 
 ### 功能说明
 
-该工具用于从GROMACS分子动力学模拟的断点中提取可继续模拟的文件。当模拟中断或需要从某个检查点继续时，使用此工具可以快速整理所需的文件。
+该工具用于从GMXPolymer模拟的断点中提取可继续模拟的文件。当模拟中断或需要从某个检查点继续时，使用此工具可以快速整理所需的文件。
 
 ### 主要功能
 
@@ -160,7 +159,7 @@ BreakMD-5/
 
 ## 作者信息
 
--  Jianchuan Liu, XHU, liujianchuan@xhu.edu.cn
+-  Jianchuan Liu, Xihua University, liujianchuan@xhu.edu.cn
 
 ## 许可
 
