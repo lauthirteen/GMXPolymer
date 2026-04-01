@@ -3,6 +3,10 @@
 ### GMXPolymer使用教程：
 https://www.simuhome.cn/forum.php?mod=viewthread&tid=110&extra=page%3D1
 
+### 如果使用该工具，请引用:
+Liu J, Lin H, Li X. GMXPolymer: a generated polymerization algorithm based on GROMACS[J]. Journal of Molecular Modeling, 2024, 30(9): 320. https://doi.org/10.1007/s00894-024-06119-4
+
+
 # 交联处理工具集
 
 ## 1. delete_itp_gro_atom.py - GROMACS ITP/GRO 原子删除工具
