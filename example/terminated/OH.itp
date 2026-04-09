@@ -1,0 +1,12 @@
+[ moleculetype ]
+;name            nrexcl
+ OH               3
+
+[ atoms ]
+;   nr  type  resi  res  atom  cgnr     charge      mass       ; qtot   bond_type
+     1    o     1   OH     O    1    -1.020000     16.00000 ; qtot -1.020
+     2   ho     1   OH     H    2     0.020000      1.00800 ; qtot -1.000
+
+[ bonds ]
+;   ai     aj funct   r             k
+     1      2   1    9.8100e-02    4.5212e+05 ;      O - H     

@@ -496,6 +496,62 @@ python remove_molecules.py -f top.top -g init.gro -m Water Ions --zero-count
 | `没有指定要删除的分子` | 未指定删除选项 | 使用 `-m` 或 `--zero-count` |
 | `警告: 文件不存在 xxx.itp` | itp文件路径错误 | 检查itp文件是否存在 |
 
+## 4. Terminal.py 对未反应位点进行封端
+
+分子动力学封端脚本，用于在GROMACS模拟中为分子添加封端基团。
+
+### 功能
+
+- 读取GROMACS .gro结构文件
+- 解析.itp拓扑文件
+- 在指定原子位置添加封端基团（如-OH、-CH3）
+- 自动生成成键、角度、二面体参数
+- 迭代运行能量最小化和MD模拟
+
+### 使用方法
+
+在文件末尾修改参数后直接运行：
+
+```bash
+python Terminal.py
+```
+
+#### 参数说明
+
+| 参数 | 描述 | 示例 |
+|------|------|------|
+| `em_mdp` | 能量最小化MDP文件 | `"minim.mdp"` |
+| `md_mdp` | MD模拟MDP文件 | `"md.mdp"` |
+| `top_file` | 系统拓扑文件 | `"top.top"` |
+| `gro_file` | 初始结构文件 | `"init.gro"` |
+| `terminal_atoms` | 需要封端的原子名称 | `["A1", "D1"]` |
+| `new_atoms` | 封端后的新原子名称 | `["CA1", "ND1"]` |
+| `link_atoms` | 封端文件中链接原子的ID | `[1, 1]` |
+| `terminal_gros` | 封端结构的GRO文件 | `["OH.gro", "CH3.gro"]` |
+| `terminal_itps` | 封端结构的ITP文件 | `["OH.itp", "CH3.itp"]` |
+| `bonded_info` | GAFF成键参数文件 | `"gaff_bonded.dat"` |
+| `iter_bond` | 每次迭代封端的原子数 | `3` |
+
+### 输入文件要求
+
+1. **init.gro** - 初始分子结构文件
+2. **top.top** - 系统拓扑文件
+3. **Molecule.itp** - 分子ITP文件（原子名称需与terminal_atoms匹配）
+4. **OH.gro/CH3.gro** - 封端GRO文件
+5. **OH.itp/CH3.itp** - 封端ITP文件
+6. **gaff_bonded.dat** - GAFF力场成键参数
+7. **minim.mdp** - 能量最小化参数
+8. **md.mdp** - MD模拟参数
+
+### 输出
+
+- `terminated.gro` - 封端完成的最终结构文件
+
+### 依赖
+
+- Python 3
+- NumPy
+- GROMACS
 
 ## 系统要求
 

@@ -1,0 +1,51 @@
+; PIP_GMX.top created by acpype (v: 2022.6.6) on Thu Mar 19 20:28:51 2026
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5     0.8333333333
+[ atomtypes ]
+;name   bond_type     mass     charge   ptype   sigma         epsilon       Amb
+ ca       ca          0.00000  0.00000   A     3.31521e-01   4.13379e-01 ; 1.86  0.0988
+ ha       ha          0.00000  0.00000   A     2.62548e-01   6.73624e-02 ; 1.47  0.0161
+ c        c           0.00000  0.00000   A     3.31521e-01   4.13379e-01 ; 1.86  0.0988
+ o        o           0.00000  0.00000   A     3.04812e-01   6.12119e-01 ; 1.71  0.1463
+ cl       cl          0.00000  0.00000   A     3.46595e-01   1.10374e+00 ; 1.95  0.2638
+ c3       c3          0.00000  0.00000   A     3.39771e-01   4.51035e-01 ; 1.91  0.1078
+ h1       h1          0.00000  0.00000   A     2.42200e-01   8.70272e-02 ; 1.36  0.0208
+ n7       n7          0.00000  0.00000   A     3.50765e-01   2.18405e-01 ; 1.97  0.0522
+ hn       hn          0.00000  0.00000   A     1.10650e-01   4.18400e-02 ; 0.62  0.0100
+ hc       hc          0.00000  0.00000   A     2.64953e-01   6.56888e-02 ; 1.49  0.0157
+ ho       ho          0.00000  0.00000   A     5.37925e-02   1.96648e-02 ; 0.30  0.0047
+
+#include "./B17.itp"
+#include "./B27.itp"
+#include "./B30.itp"
+#include "./B49.itp"
+#include "./B50.itp"
+#include "./B52.itp"
+#include "./B56.itp"
+#include "./B62.itp"
+#include "./B67.itp"
+#include "./B68.itp"
+#include "./B69.itp"
+#include "./B71.itp"
+#include "./B72.itp"
+#include "./B73.itp"
+[ system ]
+ PIP
+
+[ molecules ]
+ B17        1
+ B27        1
+ B30        1
+ B49        1
+ B50        1
+ B52        1
+ B56        1
+ B62        1
+ B67        1
+ B68        1
+ B69        1
+ B71        1
+ B72        1
+ B73        1

@@ -1,0 +1,138 @@
+                      :-) GROMACS - gmx grompp, 2023.2 (-:
+
+Executable:   /opt/gromacs-2023.2/bin/gmx
+Data prefix:  /opt/gromacs-2023.2
+Working dir:  /home/lau/monizhijia/clink/md/BreakMD_74/Remove/terminated
+Command line:
+  gmx grompp -f md.mdp -c em19.gro -p top.top -o md19.tpr -maxwarn 12
+
+Ignoring obsolete mdp entry 'title'
+Ignoring obsolete mdp entry 'ns_type'
+Replacing old mdp entry 'nstxtcout' by 'nstxout-compressed'
+
+NOTE 1 [file md.mdp]:
+  nstcomm < nstcalcenergy defeats the purpose of nstcalcenergy, consider
+  setting nstcomm equal to nstcalcenergy for less overhead
+
+Generating 1-4 interactions: fudge = 0.5
+
+NOTE 2 [file top.top, line 51]:
+  System has non-zero total charge: -18.043546
+  Total charge should normally be an integer. See
+  http://www.gromacs.org/Documentation/Floating_Point_Arithmetic
+  for discussion on how close it should be to an integer.
+
+
+
+
+WARNING 1 [file top.top, line 51]:
+  You are using Ewald electrostatics in a system with net charge. This can
+  lead to severe artifacts, such as ions moving into regions with low
+  dielectric, due to the uniform background charge. We suggest to
+  neutralize your system with counter ions, possibly in combination with a
+  physiological salt concentration.
+
+Setting the LD random seed to -304105603
+
+Generated 66 of the 66 non-bonded parameter combinations
+
+Generated 66 of the 66 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'B17'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B27'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B30'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B49'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B50'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B52'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B56'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B62'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B67'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B68'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B69'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B71'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B72'
+
+turning H bonds into constraints...
+
+Excluding 3 bonded neighbours molecule type 'B73'
+
+turning H bonds into constraints...
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+J. S. Hub, B. L. de Groot, H. Grubmueller, G. Groenhof
+Quantifying Artifacts in Ewald Simulations of Inhomogeneous Systems with a Net
+Charge
+J. Chem. Theory Comput. 10 (2014) pp. 381-393
+-------- -------- --- Thank You --- -------- --------
+
+Number of degrees of freedom in T-Coupling group System is 3597.00
+
+NOTE 3 [file md.mdp]:
+  COM removal frequency is set to (10).
+  Other settings require a global communication frequency of 20.
+  Note that this will require additional global communication steps,
+  which will reduce performance when using multiple ranks.
+  Consider setting nstcomm to a multiple of 20.
+
+
+There were 3 NOTEs
+
+There was 1 WARNING
+
+GROMACS reminds you: "I went to Venice and looked at the paintings of Canaletto to understand how he presented perspective, and it turned out it was an exponential law. If I had published this, maybe there would be a Karplus law in art theory as well as the Karplus equation in NMR" (Martin Karplus, Nobel lecture 2013)
+
+Analysing residue names:
+There are:    14      Other residues
+Analysing residues not classified as Protein/DNA/RNA/Water and splitting into groups...
+
+The largest distance between excluded atoms is 0.420 nm between atom 1324 and 1353
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 698 K
+
+Calculated rlist for 1x1 atom pair-list as 1.200 nm, buffer size 0.000 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.200 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 25x25x25, spacing 0.160 0.160 0.160
+
+Estimate for the relative computational load of the PME mesh part: 0.34
+
+This run will generate roughly 1 Mb of data

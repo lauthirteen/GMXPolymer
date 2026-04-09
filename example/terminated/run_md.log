@@ -1,0 +1,41 @@
+                      :-) GROMACS - gmx mdrun, 2023.2 (-:
+
+Executable:   /opt/gromacs-2023.2/bin/gmx
+Data prefix:  /opt/gromacs-2023.2
+Working dir:  /home/lau/monizhijia/clink/md/BreakMD_74/Remove/terminated
+Command line:
+  gmx mdrun -deffnm md19 -nt 6 -v
+
+Reading file md19.tpr, VERSION 2023.2 (single precision)
+Changing nstlist from 10 to 100, rlist from 1.2 to 1.2
+
+Update groups can not be used for this system because atoms that are (in)directly constrained together are interdispersed with other atoms
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI thread
+Using 6 OpenMP threads 
+
+
+NOTE: The number of threads is not equal to the number of (logical) cpus
+      and the -pin option is set to auto: will not pin threads to cpus.
+      This can lead to significant performance degradation.
+      Consider using -pin on (and -pinoffset in case you run multiple jobs).
+starting mdrun 'PIP'
+10000 steps,     10.0 ps.
+step 0step 100, remaining wall clock time:     2 s          step 200, remaining wall clock time:     2 s          step 300, remaining wall clock time:     2 s          step 400, remaining wall clock time:     2 s          step 500, remaining wall clock time:     2 s          step 600, remaining wall clock time:     1 s          step 700, remaining wall clock time:     1 s          step 800, remaining wall clock time:     1 s          step 900, remaining wall clock time:     1 s          step 1000, remaining wall clock time:     1 s          step 1100, remaining wall clock time:     1 s          step 1200, remaining wall clock time:     1 s          step 1300, remaining wall clock time:     1 s          step 1400, remaining wall clock time:     1 s          step 1500, remaining wall clock time:     1 s          step 1600, remaining wall clock time:     1 s          step 1700, remaining wall clock time:     1 s          step 1800, remaining wall clock time:     1 s          step 1900, remaining wall clock time:     1 s          step 2000, remaining wall clock time:     1 s          step 2100, remaining wall clock time:     1 s          step 2200, remaining wall clock time:     1 s          step 2300, remaining wall clock time:     1 s          step 2400, remaining wall clock time:     1 s          step 2500, remaining wall clock time:     1 s          step 2600, remaining wall clock time:     1 s          step 2700, remaining wall clock time:     1 s          step 2800, remaining wall clock time:     1 s          step 2900, remaining wall clock time:     1 s          step 3000, remaining wall clock time:     1 s          step 3100, remaining wall clock time:     1 s          step 3200, remaining wall clock time:     1 s          step 3300, remaining wall clock time:     1 s          step 3400, remaining wall clock time:     1 s          step 3500, remaining wall clock time:     1 s          step 3600, remaining wall clock time:     1 s          step 3700, remaining wall clock time:     1 s          step 3800, remaining wall clock time:     1 s          step 3900, remaining wall clock time:     1 s          step 4000, remaining wall clock time:     1 s          step 4100, remaining wall clock time:     1 s          step 4200, remaining wall clock time:     1 s          step 4300, remaining wall clock time:     1 s          step 4400, remaining wall clock time:     1 s          step 4500, remaining wall clock time:     1 s          step 4600, remaining wall clock time:     1 s          step 4700, remaining wall clock time:     1 s          step 4800, remaining wall clock time:     1 s          step 4900, remaining wall clock time:     1 s          step 5000, remaining wall clock time:     1 s          step 5100, remaining wall clock time:     0 s          step 5200, remaining wall clock time:     0 s          step 5300, remaining wall clock time:     0 s          step 5400, remaining wall clock time:     0 s          step 5500, remaining wall clock time:     0 s          step 5600, remaining wall clock time:     0 s          step 5700, remaining wall clock time:     0 s          step 5800, remaining wall clock time:     0 s          step 5900, remaining wall clock time:     0 s          step 6000, remaining wall clock time:     0 s          step 6100, remaining wall clock time:     0 s          step 6200, remaining wall clock time:     0 s          step 6300, remaining wall clock time:     0 s          step 6400, remaining wall clock time:     0 s          step 6500, remaining wall clock time:     0 s          step 6600, remaining wall clock time:     0 s          step 6700, remaining wall clock time:     0 s          step 6800, remaining wall clock time:     0 s          step 6900, remaining wall clock time:     0 s          step 7000, remaining wall clock time:     0 s          step 7100, remaining wall clock time:     0 s          step 7200, remaining wall clock time:     0 s          step 7300, remaining wall clock time:     0 s          step 7400, remaining wall clock time:     0 s          step 7500, remaining wall clock time:     0 s          step 7600, remaining wall clock time:     0 s          step 7700, remaining wall clock time:     0 s          step 7800, remaining wall clock time:     0 s          step 7900, remaining wall clock time:     0 s          step 8000, remaining wall clock time:     0 s          step 8100, remaining wall clock time:     0 s          step 8200, remaining wall clock time:     0 s          step 8300, remaining wall clock time:     0 s          step 8400, remaining wall clock time:     0 s          step 8500, remaining wall clock time:     0 s          step 8600, remaining wall clock time:     0 s          step 8700, remaining wall clock time:     0 s          step 8800, remaining wall clock time:     0 s          step 8900, remaining wall clock time:     0 s          step 9000, remaining wall clock time:     0 s          step 9100, remaining wall clock time:     0 s          step 9200, remaining wall clock time:     0 s          step 9300, remaining wall clock time:     0 s          step 9400, remaining wall clock time:     0 s          step 9500, remaining wall clock time:     0 s          step 9600, remaining wall clock time:     0 s          step 9700, remaining wall clock time:     0 s          step 9800, remaining wall clock time:     0 s          step 9900, remaining wall clock time:     0 s          
+Writing final coordinates.
+
+Back Off! I just backed up md19.gro to ./#md19.gro.1#
+step 10000, remaining wall clock time:     0 s          
+               Core t (s)   Wall t (s)        (%)
+       Time:       13.313        2.219      599.9
+                 (ns/day)    (hour/ns)
+Performance:      389.328        0.062
+
+GROMACS reminds you: "History has expired" (PubMed Central)
+

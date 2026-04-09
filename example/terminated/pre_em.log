@@ -1,0 +1,88 @@
+                      :-) GROMACS - gmx grompp, 2023.2 (-:
+
+Executable:   /opt/gromacs-2023.2/bin/gmx
+Data prefix:  /opt/gromacs-2023.2
+Working dir:  /home/lau/monizhijia/clink/md/BreakMD_74/Remove/terminated
+Command line:
+  gmx grompp -f minim.mdp -c md19.gro -p top.top -o em19.tpr -maxwarn 12
+
+Ignoring obsolete mdp entry 'title'
+Ignoring obsolete mdp entry 'cpp'
+Ignoring obsolete mdp entry 'ns_type'
+
+NOTE 1 [file minim.mdp]:
+  With Verlet lists the optimal nstlist is >= 10, with GPUs >= 20. Note
+  that with the Verlet scheme, nstlist has no effect on the accuracy of
+  your simulation.
+
+Generating 1-4 interactions: fudge = 0.5
+
+WARNING 1 [file top.top, line 51]:
+  The following macros were defined in the 'define' mdp field with the -D
+  prefix, but were not used in the topology:
+      FLEXIBLE
+  If you haven't made a spelling error, either use the macro you defined,
+  or don't define the macro
+
+
+NOTE 2 [file top.top, line 51]:
+  System has non-zero total charge: -18.043546
+  Total charge should normally be an integer. See
+  http://www.gromacs.org/Documentation/Floating_Point_Arithmetic
+  for discussion on how close it should be to an integer.
+
+
+
+Number of degrees of freedom in T-Coupling group rest is 4269.00
+The integrator does not provide a ensemble temperature, there is no system ensemble temperature
+
+NOTE 3 [file minim.mdp]:
+  You are using a plain Coulomb cut-off, which might produce artifacts.
+  You might want to consider using PME electrostatics.
+
+
+
+There were 3 NOTEs
+
+There was 1 WARNING
+
+GROMACS reminds you: "Here are all the 'gmx' tools... but no gmx writethesis" (Christian Blau)
+
+Setting the LD random seed to -243409060
+
+Generated 66 of the 66 non-bonded parameter combinations
+
+Generated 66 of the 66 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'B17'
+
+Excluding 3 bonded neighbours molecule type 'B27'
+
+Excluding 3 bonded neighbours molecule type 'B30'
+
+Excluding 3 bonded neighbours molecule type 'B49'
+
+Excluding 3 bonded neighbours molecule type 'B50'
+
+Excluding 3 bonded neighbours molecule type 'B52'
+
+Excluding 3 bonded neighbours molecule type 'B56'
+
+Excluding 3 bonded neighbours molecule type 'B62'
+
+Excluding 3 bonded neighbours molecule type 'B67'
+
+Excluding 3 bonded neighbours molecule type 'B68'
+
+Excluding 3 bonded neighbours molecule type 'B69'
+
+Excluding 3 bonded neighbours molecule type 'B71'
+
+Excluding 3 bonded neighbours molecule type 'B72'
+
+Excluding 3 bonded neighbours molecule type 'B73'
+Analysing residue names:
+There are:    14      Other residues
+Analysing residues not classified as Protein/DNA/RNA/Water and splitting into groups...
+
+This run will generate roughly 0 Mb of data
