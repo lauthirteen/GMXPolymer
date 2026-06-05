@@ -1066,9 +1066,11 @@ def main(options):
                                 Mole = int(Mole) - 1
                             #if MolName == Dname:   ///// Jianchuan Liu modified 2025-10-26
                             #    Mole = int(Mole) - 1
-                            os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
+                            if int(Mole) > 0:  #///// Jianchuan Liu modified 2026-06-05
+                                os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                         else:
-                            os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
+                            if int(Mole) > 0:  #///// Jianchuan Liu modified 2026-06-05
+                                os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                     os.system("echo ' '%s '      ' %s  >> %s" % (NewResname,1,TopFile))
                     # add the inclue itp in the topol.top
                     LineNum = GetLineNum(TopFile, "system")[0][0]
@@ -1196,9 +1198,11 @@ def main(options):
                                 Mole = int(Mole) - 1
                             if MolName == Dname:
                                 Mole = int(Mole) - 1
-                            os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
+                            if int(Mole) > 0: #///// Jianchuan Liu modified 2026-06-05
+                                os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                         else:
-                            os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
+                            if int(Mole) > 0: #///// Jianchuan Liu modified 2026-06-05
+                                os.system("echo ' '%s '      ' %s  >> %s" % (MolName,Mole,TopFile))
                     os.system("echo ' '%s '      ' %s  >> %s" % (NewResname,1,TopFile))
                     # add the inclue itp in the topol.top
                     LineNum = GetLineNum(TopFile, "system")[0][0]
